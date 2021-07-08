@@ -52,7 +52,7 @@
             "defaultValue": "[concat(resourceGroup().name, '-ai')]",
             "type": "String",
             "metadata": {
-                "description": "The URL for the GitHub repository that contains the project to deploy."
+                "description": "The name of the Application Insights resource."
             }
         },
         "secretName": {
@@ -144,7 +144,7 @@
                         },
                         {
                             "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(resourceId('microsoft.insights/components', parameters('functionAppName')), '2018-05-01-preview').InstrumentationKey]"
+                            "value": "[reference(resourceId('microsoft.insights/components', parameters('applicationInsightsName')), '2018-05-01-preview').InstrumentationKey]"
                         }
                     ]
                 }
