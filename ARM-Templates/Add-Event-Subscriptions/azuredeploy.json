@@ -10,7 +10,7 @@
             }
         },
         "storageAccountName": {
-            "defaultValue": "[concat(resourceGroup().name, 'storage2')]",
+            "defaultValue": "[concat(resourceGroup().name, 'sa2')]",
             "type": "String",
             "metadata": {
                 "description": "The name of the storage with key to rotate."
@@ -47,7 +47,7 @@
        
     },
     "variables": {
-		"eventSubscriptionName": "[concat(parameters('functionAppName'),'-',parameters('secretName'))]"
+		"eventSubscriptionName": "[concat('storagekey-rotation-eventgrid-topic','-',parameters('secretName'))]"
 		
     },
     "resources": [
@@ -114,7 +114,7 @@
                                 "filter": {
                                     "subjectBeginsWith": "[parameters('secretName')]",
                                     "subjectEndsWith": "[parameters('secretName')]",
-                                    "includedEventTypes": ["Microsoft.KeyVault.SecretNearExpiry"]
+                                    "includedEventTypes": ["Microsoft.KeyVault.SecretNearExpiry", "Microsoft.KeyVault.SecretExpired"]
                                     
                                 }
                             }
