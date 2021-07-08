@@ -48,6 +48,13 @@
                 "description": "The name of the function app that you wish to create."
             }
         },
+        "applicationInsightsName": {
+            "defaultValue": "[concat(resourceGroup().name, '-ai')]",
+            "type": "String",
+            "metadata": {
+                "description": "The URL for the GitHub repository that contains the project to deploy."
+            }
+        },
         "secretName": {
             "defaultValue": "storageKey",
             "type": "String",
@@ -56,7 +63,7 @@
             }
         },
         "repoURL": {
-            "defaultValue": "https://github.com/Azure-Samples/KeyVault-Rotation-StorageAccountKey-PowerShell.git",
+            "defaultValue": "https://github.com/mapenzo/azure-keyvault-storage-rotation-key-pscore.git",
             "type": "String",
             "metadata": {
                 "description": "The URL for the GitHub repository that contains the project to deploy."
@@ -64,7 +71,7 @@
         }
     },
     "variables": {
-        "functionStorageAccountName": "[concat(uniquestring(parameters('functionAppName')), 'fnappstrg')]",
+        "functionStorageAccountName": "[concat(uniquestring(parameters('functionAppName')), 'fnappsa')]",
         "eventSubscriptionName": "[concat(parameters('functionAppName'),'-',parameters('secretName'))]",
         "appServiceSKU":"[if(equals(parameters('appServicePlanType'),'Consumption Plan'),'Y1','P1V2')]"
     },
@@ -152,7 +159,7 @@
                     ],
                     "properties": {
                         "RepoUrl": "[parameters('repoURL')]",
-                        "branch": "main",
+                        "branch": "develop",
                         "IsManualIntegration": true
                     }
                 }
@@ -161,13 +168,13 @@
         {
             "type": "microsoft.insights/components",
             "apiVersion": "2018-05-01-preview",
-            "name": "[parameters('functionAppName')]",
+            "name": "[parameters('applicationInsightsName')]",
             "location": "[resourceGroup().location]",
             "tags": {
-                "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('functionAppName')))]": "Resource"
+                "[concat('hidden-link:', resourceId('Microsoft.Web/sites', parameters('applicationInsightsName')))]": "Resource"
             },
             "properties": {
-                "ApplicationId": "[parameters('functionAppName')]",
+                "ApplicationId": "[parameters('applicationInsightsName')]",
                 "Request_Source": "IbizaWebAppExtensionCreate"
             }
         },
@@ -224,8 +231,7 @@
                                 "filter": {
                                     "subjectBeginsWith": "[parameters('secretName')]",
                                     "subjectEndsWith": "[parameters('secretName')]",
-                                    "includedEventTypes": [ "Microsoft.KeyVault.SecretNearExpiry" ]
-
+                                    "includedEventTypes": [ "Microsoft.KeyVault.SecretNearExpiry", "Microsoft.KeyVault.SecretExpired" ]
                                 }
                             }
                         }
